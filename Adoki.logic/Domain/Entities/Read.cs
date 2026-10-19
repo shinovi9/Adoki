@@ -7,15 +7,15 @@ public class Read
 {
     public Read()
     {
-        Date = DateTime.Now.Date;
-        Odometer = new(0);
-        Operation = Maintenance.NONE;
+        this.Date = DateTime.Now.Date;
+        this.Odometer = new(0);
+        this.Operation = Maintenance.NONE;
     }
-    public Read(DateTime Date, Kilometer Km)
+    public Read(DateTime Date, Kilometer Km, Maintenance Op = Maintenance.NONE)
     {
         this.Date = Date.Date;
-        Odometer = Km;
-        Operation = Maintenance.NONE;
+        this.Odometer = Km;
+        this.Operation = Op;
     }
 
     public DateTime Date { get; set; }
