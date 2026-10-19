@@ -7,14 +7,21 @@ namespace Adoki.logic.Domain.Aggregates;
 public class History
 {
     public List<Read> Items { get; init; }
-    public (int Days, Kilometer Km) LastDifference => Items.Count > 1 ?
+    public (int Days, Kilometer Km) FinalStretch => Items.Count > 1 ?
                             Items.Last() - Items[^2] :
-                                throw new StackOverflowException("No Hay mas de una lectura.");
+                                throw new InvalidOperationException("Insuficiente cantidad de lecturas.");
+    //No comprendo del todo el propósito de LastOperationDifference?
     public (int Days, Kilometer Km) LastOperationDifference => Items.Count > 1 ?
                              Items.Last() - Items.Last(rd => rd.Operation != Maintenance.NONE) :
-                                throw new StackOverflowException("No hay mas de una lectura.");
+                                throw new InvalidOperationException("Insuficiente cantidad de lecturas.");
 
     public History() => Items = [];
+
+    public History(List<Read> Readings) => Items = Readings;
+
+    public Read? this[DateTime date] {
+        get => Items.Find(rd => rd.Date >= date);
+    }
 
     public void Append(Read read)
     {
@@ -23,21 +30,21 @@ public class History
         if (!fechaExistente)
             Items.Add(read);
         else
-            throw new ExisteReadException("Lectura ya añadida anteriormente, solo actualizable.");
+            throw new InvalidOperationException("Sólo se acepta una lectura por día.");
     }
 
     public (int Days, Kilometer Km) DifferenceSince(DateTime date)
     {
-        if (Items.Count > 1)
-            throw new StackOverflowException("No Hay mas de una lectura.");
+        if (Items.Count < 1)
+            throw new InvalidOperationException("No hay suficientes lecturas, para esta operación.");
 
         var last = Items.Last();
-        Read? read = Items.FirstOrDefault(rd => rd.Date == date);
+        //Read? read = Items.FirstOrDefault(rd => rd.Date == date);
 
-        if (read != null)
-            return last - read;
+        //if (read != null)
+        //    return last - read;
 
-        var readAtDate = Items.Where(rd => rd.Date > date).OrderBy(rd => rd.Date).FirstOrDefault();
+        var readAtDate = Items.Where(rd => rd.Date >= date).OrderBy(rd => rd.Date).FirstOrDefault();
         if (readAtDate != null)
             return last - readAtDate;
         throw new NullReferenceException();
@@ -46,13 +53,15 @@ public class History
     public Read? FindLastReadWithOperation(Maintenance operation) =>
              Items.FindLast(rd => rd.Operation.HasFlag(operation));
 
-    public List<Read> FindReadWithOperation(Maintenance operation, int maxSize = 2)
+    public History FilterByOperation(Maintenance operation, int maxSize = 2)
     {
         var listRead = Items.FindAll(rd => rd.Operation.HasFlag(operation));
-        if (listRead.Count == 0)
-            return listRead;
+        if (listRead.Count <= maxSize) //Si la lista tiene igual o menos cantidad
+            return new History(listRead);
 
-        return listRead.Count >= maxSize ? listRead[^maxSize..^1] : listRead[^listRead.Count..^1];
+        //return listRead.Count > maxSize ? listRead[^maxSize..^1] : listRead[^listRead.Count..^1];
+        //Si el código llegó hasta este punto es porque la cantidad excede el límite, entonces:
+        return new History(listRead[^maxSize..]);
     }
 }
 
