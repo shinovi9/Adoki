@@ -17,6 +17,7 @@ public class History
                                 throw new StackOverflowException("No hay mas de una lectura.");
 
     public History() => Items = [];
+    public History(List<Read> reads)=> Items = reads;
 
     public void Append(Read read)
     {
