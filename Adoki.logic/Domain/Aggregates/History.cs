@@ -18,7 +18,7 @@ public class History
 
     public void Append(Read read)
     {
-        var fechaExistente = Items.Any(r => r.Date == read.Date);
+        bool fechaExistente = Items.Any(r => r.Date == read.Date);
 
         if (!fechaExistente)
             Items.Add(read);
@@ -31,13 +31,13 @@ public class History
         if (Items.Count > 1)
             throw new StackOverflowException("No Hay mas de una lectura.");
 
-        var last = Items.Last();
+        Read last = Items.Last();
         Read? read = Items.FirstOrDefault(rd => rd.Date == date);
 
         if (read != null)
             return last - read;
 
-        var readAtDate = Items.Where(rd => rd.Date > date).OrderBy(rd => rd.Date).FirstOrDefault();
+        Read? readAtDate = Items.Where(rd => rd.Date > date).OrderBy(rd => rd.Date).FirstOrDefault();
         if (readAtDate != null)
             return last - readAtDate;
         throw new NullReferenceException();
@@ -48,7 +48,7 @@ public class History
 
     public List<Read> FindReadWithOperation(Maintenance operation, int maxSize = 2)
     {
-        var listRead = Items.FindAll(rd => rd.Operation.HasFlag(operation));
+        List<Read> listRead = Items.FindAll(rd => rd.Operation.HasFlag(operation));
         if (listRead.Count == 0)
             return listRead;
 
