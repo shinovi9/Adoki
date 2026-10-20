@@ -23,10 +23,9 @@ public class History
     {
         bool fechaExistente = Items.Any(r => r.Date == read.Date);
 
-        if (!fechaExistente)
-            Items.Add(read);
-        else
+        if (fechaExistente)
             throw new ExisteReadException("Lectura ya añadida anteriormente, solo actualizable.");
+        Items.Add(read);
     }
 
     public (int Days, Kilometer Km) DifferenceSince(DateTime date)
