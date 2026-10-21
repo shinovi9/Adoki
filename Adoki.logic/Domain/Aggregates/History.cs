@@ -9,9 +9,9 @@ public class History
     public List<Read> Items { get; init; }
 
     public int Count => Items.Count;
-    public (int Days, Kilometer Km) LastDifference => Items.Count > 1 ?
+    public (int Days, Kilometer Km) FinalStretch => Items.Count > 1 ?
                             Items.Last() - Items[^2] :
-                                throw new StackOverflowException("No Hay mas de una lectura.");
+                                throw new InvalidOperationException("Insuficiente cantidad de lecturas.");
     public (int Days, Kilometer Km) LastOperationDifference => Items.Count > 1 ?
                              Items.Last() - Items.Last(rd => rd.Operation != Maintenance.NONE) :
                                 throw new StackOverflowException("No hay mas de una lectura.");
