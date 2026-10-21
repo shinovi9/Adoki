@@ -36,15 +36,15 @@ public class History
         if (Items.Count <= 1)
             throw new InvalidOperationException("Insuficiente cantidad de lecturas.");
 
-        Read last = Items.Last();
-        Read? read = Items.FirstOrDefault(rd => rd.Date == date);
+        Read lastRead = Items.Last();
+        Read? ReadInData = Items.FirstOrDefault(rd => rd.Date == date);
 
-        if (read != null)
-            return last - read;
+        if (ReadInData != null)
+            return lastRead - ReadInData;
 
-        Read? readAtDate = Items.Where(rd => rd.Date > date).OrderBy(rd => rd.Date).FirstOrDefault();
+        Read? readAtDate = Items.FirstOrDefault(rd => rd.Date > date);
         if (readAtDate != null)
-            return last - readAtDate;
+            return lastRead - readAtDate;
         throw new NullReferenceException();
     }
 
@@ -92,20 +92,20 @@ public class ExisteReadException : Exception
 /*
 public void UpdateRead(Maintenance operation)
 {
-    int last;
+    int lastRead;
     if (Items.Count >= 1)
     {
-        last = Items.Count - 1;
-        Items[last].Operation |= operation;
+        lastRead = Items.Count - 1;
+        Items[lastRead].Operation |= operation;
     }
 }
 public void UpdateRead(Kilometer kilometer)
 {
-    int last;
+    int lastRead;
     if (Items.Count >= 1)
     {
-        last = Items.Count() - 1;
-        Items[last].Odometer += kilometer;
+        lastRead = Items.Count() - 1;
+        Items[lastRead].Odometer += kilometer;
     }
 }
 public void UpdateRead(Maintenance operation, Kilometer kilometer)
