@@ -27,8 +27,8 @@ public class History
             throw new ExisteReadException("Lectura ya añadida anteriormente, solo actualizable.");
 
         int index = Items.FindLastIndex(rd => rd.Date < read.Date);
-        if (index == Items.Count - 1 ) Items.Add(read);
-        Items.Insert(index-1, read);
+        if (index == Items.Count - 1) Items.Add(read);
+        Items.Insert(index - 1, read);
     }
 
     public (int Days, Kilometer Km) DifferenceSince(DateTime date)
@@ -51,13 +51,12 @@ public class History
     public Read? FindLastReadWithOperation(Maintenance operation) =>
              Items.FindLast(rd => rd.Operation.HasFlag(operation));
 
-    public List<Read> FindReadWithOperation(Maintenance operation, int maxSize = 2)
+    public History FilterReadWithOperation(Maintenance operation)
     {
         List<Read> listRead = Items.FindAll(rd => rd.Operation.HasFlag(operation));
         if (listRead.Count == 0)
-            return listRead;
-
-        return listRead.Count >= maxSize ? listRead[^maxSize..^1] : listRead[^listRead.Count..^1];
+            return new(listRead);
+        return new(listRead);
     }
 }
 
