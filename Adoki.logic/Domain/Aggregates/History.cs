@@ -30,8 +30,8 @@ public class History
 
     public (int Days, Kilometer Km) DifferenceSince(DateTime date)
     {
-        if (Items.Count > 1)
-            throw new StackOverflowException("No Hay mas de una lectura.");
+        if (Items.Count <= 1)
+            throw new InvalidOperationException("Insuficiente cantidad de lecturas.");
 
         Read last = Items.Last();
         Read? read = Items.FirstOrDefault(rd => rd.Date == date);
