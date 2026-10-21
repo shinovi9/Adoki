@@ -17,7 +17,7 @@ public class History
                                 throw new StackOverflowException("No hay mas de una lectura.");
 
     public History() => Items = [];
-    public History(List<Read> reads)=> Items = reads;
+    public History(List<Read> reads) => Items = reads;
 
     public void Append(Read read)
     {
@@ -25,7 +25,10 @@ public class History
 
         if (fechaExistente)
             throw new ExisteReadException("Lectura ya añadida anteriormente, solo actualizable.");
-        Items.Add(read);
+
+        int index = Items.FindLastIndex(rd => rd.Date < read.Date);
+        if (index == Items.Count - 1 ) Items.Add(read);
+        Items.Insert(index-1, read);
     }
 
     public (int Days, Kilometer Km) DifferenceSince(DateTime date)
