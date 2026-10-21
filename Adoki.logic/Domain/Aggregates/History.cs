@@ -14,8 +14,8 @@ public class History
     {
         get 
         { 
-            Read? read = Items.Find(rd => rd.Date == date); 
-            return read ?? throw new ExisteReadException("No existe tal read");
+            Read? read = Items.FirstOrDefault(rd => rd.Date >= date); 
+            return read ?? throw new NullReferenceException("No existe tal read");
         }
     }
     public (int Days, Kilometer Km) FinalStretch => Items.Count > 1 ?
@@ -60,7 +60,7 @@ public class History
     public Read? FindLastReadWithOperation(Maintenance operation) =>
              Items.FindLast(rd => rd.Operation.HasFlag(operation));
 
-    public History FilterReadWithOperation(Maintenance operation)
+    public History FilterByOperation(Maintenance operation)
     {
         List<Read> listRead = Items.FindAll(rd => rd.Operation.HasFlag(operation));
         if (listRead.Count == 0)
