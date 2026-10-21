@@ -9,6 +9,15 @@ public class History
     public List<Read> Items { get; init; }
 
     public int Count => Items.Count;
+
+    public object this[DateTime date]
+    {
+        get 
+        { 
+            Read? read = Items.Find(rd => rd.Date == date); 
+            return read ?? throw new ExisteReadException("No existe tal read");
+        }
+    }
     public (int Days, Kilometer Km) FinalStretch => Items.Count > 1 ?
                             Items.Last() - Items[^2] :
                                 throw new InvalidOperationException("Insuficiente cantidad de lecturas.");
